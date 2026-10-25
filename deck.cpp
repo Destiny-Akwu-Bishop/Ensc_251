@@ -8,7 +8,7 @@ using namespace std;
 Deck::Deck() : numCards(0), head(nullptr) {} // Default constructor
 Deck:: Deck(const Deck& deck): numCards(deck.numCards), head(nullptr) {
     Node* last = nullptr;
-}// Copy constructor
+}
 Deck:: ~Deck(){
 
 }//Destructor
