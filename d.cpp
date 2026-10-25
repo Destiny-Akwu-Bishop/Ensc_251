@@ -1,34 +1,18 @@
-#include <iostream> 
-#include <string>
+#include <iostream>
 
+using namespace std;
 
-class Person{
-    private:
-        std:: string first;
-        std:: string last;
-
-    
-
-
-
-    public:
-        void setFirstName(std:: string firstName){first = firstName;}
-        
-        void setLastName(std:: string lastName){last = lastName;}
-        void printFullName() {std:: cout << first << " "<< last << std::endl;}
+struct Data {
+    double time[10];
+    int distance;
 };
 
+Data my_best;
 int main(){
-    Person p;
-    p.setFirstName("Caleb");
-    p.setLastName("Curry");
+my_best.distance = 20;
 
-    p.printFullName();
-
-    Person p2;
-    p2.setFirstName("John");
-    p2.setLastName( "Doe");
-    p2.printFullName();
-
-    return 0;
+cout << "Enter ten times (in seconds):\n";
+for (int i = 0; i < 10; i++){
+    cin >> my_best.time[i];
+}
 }
