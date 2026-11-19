@@ -1,69 +1,98 @@
 #include <iostream>
 #include "card.hpp"
-#include "deck.hpp"
+#include "cardTree.hpp"
 
 using namespace std;
 
 int main() {
-    // 1. Create an empty deck
-    Deck* original = new Deck();
+    // 1-2. Create an empty tree and display its status
+    CardTree tree1;
+    cout << "tree1 empty? " << (tree1.isEmpty() ? "Yes" : "No")
+         << ", cards: " << tree1.getNumCards() << endl;
 
-    // 2. Add the 10 cards (rank, suit): 0 Clubs, 1 Diamonds, 2 Hearts, 3 Spades
-    original->addCard(Card(13, 2));   // King of Hearts
-    original->addCard(Card(2, 0));    // 2 of Clubs
-    original->addCard(Card(4, 3));    // 4 of Spades
-    original->addCard(Card(5, 1));    // 5 of Diamonds
-    original->addCard(Card(12, 1));   // Queen of Diamonds
-    original->addCard(Card(7, 3));    // 7 of Spades
-    original->addCard(Card(10, 0));   // 10 of Clubs
-    original->addCard(Card(3, 2));    // 3 of Hearts
-    original->addCard(Card(4, 1));    // 4 of Diamonds
-    original->addCard(Card(1, 3));    // Ace of Spades
+    // 3. Add the 12 cards (rank, suit): 0 Clubs, 1 Diamonds, 2 Hearts, 3 Spades
+    tree1.addCard(Card(7, 2));    // 7 of Hearts
+    tree1.addCard(Card(4, 0));    // 4 of Clubs
+    tree1.addCard(Card(12, 1));   // Queen of Diamonds
+    tree1.addCard(Card(6, 3));    // 6 of Spades
+    tree1.addCard(Card(6, 1));    // 6 of Diamonds
+    tree1.addCard(Card(10, 0));   // 10 of Clubs
+    tree1.addCard(Card(13, 3));   // King of Spades
+    tree1.addCard(Card(5, 2));    // 5 of Hearts
+    tree1.addCard(Card(9, 1));    // 9 of Diamonds
+    tree1.addCard(Card(11, 0));   // Jack of Clubs
+    tree1.addCard(Card(3, 1));    // 3 of Diamonds
+    tree1.addCard(Card(8, 2));    // 8 of Hearts
 
-    // 3. Display the complete deck
-    cout << "Original deck (" << original->getNumCards() << " cards):" << endl;
-    original->printDeck();
+    // 4. Try to add 7 of Hearts a second time
+    cout << "\nAdding 7 of Hearts again: "
+         << (tree1.addCard(Card(7, 2)) ? "successful" : "failed (duplicate)") << endl;
 
-    // 4. Create a copy of the deck
-    Deck* second = new Deck(*original);
+    // 5. Number of cards
+    cout << "Cards in tree1: " << tree1.getNumCards() << endl;
 
-    // 5. Remove and display the top card of the original deck
-    Card top = original->drawTopCard();
-    cout << "\nTop card removed from original: " << top << endl;
+    // 6-7. Traversals
+    cout << "\ntree1 in-order:" << endl;
+    tree1.printInOrder(cout);
+    cout << "\ntree1 pre-order:" << endl;
+    tree1.printPreOrder(cout);
 
-    // 6. Check whether either deck is empty
-    cout << "\nOriginal deck empty? " << (original->isEmpty() ? "Yes" : "No") << endl;
-    cout << "Second deck empty? " << (second->isEmpty() ? "Yes" : "No") << endl;
+    // 8. Height
+    cout << "\nHeight of tree1: " << tree1.getHeight() << endl;
 
-    // 7. Display both complete decks
-    cout << "\nOriginal deck (" << original->getNumCards() << " cards):" << endl;
-    original->printDeck();
-    cout << "\nSecond deck (" << second->getNumCards() << " cards):" << endl;
-    second->printDeck();
+    // 9-10. contains()
+    cout << "\nContains Queen of Diamonds? "
+         << (tree1.contains(Card(12, 1)) ? "Yes" : "No") << endl;
+    cout << "Contains 8 of Clubs? "
+         << (tree1.contains(Card(8, 0)) ? "Yes" : "No") << endl;
 
-    // 8. Find and display the largest card in the original deck
-    cout << "\nLargest card in original deck: " << original->findHighCard() << endl;
-
-    // 9. Ask the user to input a card
-    Card userCard;
-    cout << "\nEnter a card (format: Rank of Suit, e.g. Queen of Hearts): ";
-    cin >> userCard;
-
-    // 10. Add that card to the second deck
-    if (userCard.isValid()) {
-        second->addCard(userCard);
-    } else {
-        cout << "Invalid card, not added." << endl;
+    // 11. findCard()
+    const Card* found = tree1.findCard(Card(11, 0));
+    if (found != nullptr) {
+        cout << "findCard found: " << *found << endl;
+    }
+    else {
+        cout << "Jack of Clubs not found" << endl;
     }
 
-    // 11. Display the second deck
-    cout << "\nSecond deck (" << second->getNumCards() << " cards):" << endl;
-    second->printDeck();
+    // 12. Copy constructor
+    CardTree tree2(tree1);
 
-    // 12. Destroy both decks
-    delete original;
-    delete second;
-    cout << "\nBoth decks destroyed." << endl;
+    // 13. Assignment operator
+    CardTree tree3;
+    tree3 = tree1;
+
+    // 14. Remove a leaf
+    cout << "\nRemoving 5 of Hearts (leaf): "
+         << (tree1.removeCard(Card(5, 2)) ? "successful" : "failed") << endl;
+    tree1.printInOrder(cout);
+
+    // 15. Remove a node with one child (6 of Spades, since 2 of Spades is not in the tree)
+    cout << "\nRemoving 6 of Spades (one child): "
+         << (tree1.removeCard(Card(6, 3)) ? "successful" : "failed") << endl;
+    tree1.printInOrder(cout);
+
+    // 16. Remove a node with two children
+    cout << "\nRemoving 10 of Clubs (two children): "
+         << (tree1.removeCard(Card(10, 0)) ? "successful" : "failed") << endl;
+    tree1.printInOrder(cout);
+
+    // 17. Remove a card that is not in the tree
+    cout << "\nRemoving 8 of Clubs: "
+         << (tree1.removeCard(Card(8, 0)) ? "successful" : "failed (not found)") << endl;
+
+    // 18. Display all three trees
+    cout << "\ntree1 in-order:" << endl;
+    tree1.printInOrder(cout);
+    cout << "\ntree2 in-order:" << endl;
+    tree2.printInOrder(cout);
+    cout << "\ntree3 in-order:" << endl;
+    tree3.printInOrder(cout);
+
+    // 19. Number of cards and height of each tree
+    cout << "\ntree1: " << tree1.getNumCards() << " cards, height " << tree1.getHeight() << endl;
+    cout << "tree2: " << tree2.getNumCards() << " cards, height " << tree2.getHeight() << endl;
+    cout << "tree3: " << tree3.getNumCards() << " cards, height " << tree3.getHeight() << endl;
 
     return 0;
 }
